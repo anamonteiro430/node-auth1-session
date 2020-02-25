@@ -41,3 +41,5 @@
 
 FOR:
 next()
+
+Create logout endopoint to immediatelly invalidate the session
