@@ -38,4 +38,34 @@ router.post('/login', (req, res) => {
 		});
 });
 
+router.get('/logout', (req, res) => {
+	//use librarby express-session
+
+	if (req.session) {
+		req.session.destroy(err => {
+			if (err) {
+				res.json({ message: 'cant logout' });
+			} else {
+				res.status(200).json({ message: 'logged out' });
+			}
+		});
+	} else {
+		res.status(200).json({ message: 'You were never here' });
+	}
+
+	Users.findBy({ username })
+		.first()
+		.then(user => {
+			if (user && bcrypt.compareSync(password, user.password)) {
+				req.session.user = user; //saving info of the user in the session, get's a cookie
+				res.status(200).json({ message: `Welcome ${user.username}!` });
+			} else {
+				res.status(401).json({ message: 'Invalid Credentials' });
+			}
+		})
+		.catch(error => {
+			res.status(500).json(error);
+		});
+});
+
 module.exports = router;
