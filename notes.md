@@ -1,6 +1,6 @@
 ### Sessions
 
-- npm i express-session
+- npm i connect-session-knex
 - import it and use it as global middleware - in server.js
 - accepts two arguments. First: configuration object
 - server.use(session(sessionConfig));
@@ -18,26 +18,31 @@
   };
 
   - change login endpoint:
+
+
     if (user && bcrypt.compareSync(password, user.password)) {
     req.session.user = user; //saving info of the user in the session, get's a cookie
 
-  - in the restrited middeware we no longer need to search anything in the database:
+OR
+req.session.username = user.username;
 
-  delete:
-  const bcrypt = require('bcryptjs');
-  const Users = require('./../users/users_model.js');
-  Users.findBy({ username })
-  .first()
-  .then(user => {
-  if (user && bcrypt.compareSync(password, user.password)) {
-  next();
-  } else {
-  res.status(401).json({ message: 'You shall not pass!' });
-  }
-  })
-  .catch(({ name, message, stack }) => {
-  res.status(500).json({ name, message, stack });
-  });
+- in the restrited middeware we no longer need to search anything in the database:
+
+delete:
+const bcrypt = require('bcryptjs');
+const Users = require('./../users/users_model.js');
+Users.findBy({ username })
+.first()
+.then(user => {
+if (user && bcrypt.compareSync(password, user.password)) {
+next();
+} else {
+res.status(401).json({ message: 'You shall not pass!' });
+}
+})
+.catch(({ name, message, stack }) => {
+res.status(500).json({ name, message, stack });
+});
 
 FOR:
 next()
